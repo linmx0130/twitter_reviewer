@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import url_for
+from flask import render_template
 from waston_api import WastonEmotion
 from twitter_api import TwitterAPI
 from datetime import datetime
@@ -19,7 +20,7 @@ def get_max_score_key(emotion_scores):
 
 @app.route("/")
 def hello():
-    return "<h1>Hello World!</h1>"
+    return render_template('index.html')
 
 @app.route("/eval_emotion/<twitter_name>")
 def eval_emotion(twitter_name):
@@ -32,7 +33,7 @@ def eval_emotion(twitter_name):
     print("Data fetched")
     
     ret = "<!DOCTYPE html><html><head><title>Show Items</title><script type='text/javascript' src='../static/jquery.js'></script> \
-         <script type='text/javascript' src='../static/main.js'></script><script>"
+         <script>"
      
     username, profile_image_url = twitter_api.get_user_name_and_image(twitter_name)
     ret += 'profile_image_url="{}";'.format(profile_image_url)
@@ -41,7 +42,7 @@ def eval_emotion(twitter_name):
     ret += 'fear="#D0C9C1";'
     ret += 'sadness="#C4CCC7";'
     ret += 'joy="#F4DFC1";'
-    ret += 'angry="#D5BBAA";'
+    ret += 'anger="#D5BBAA";'
     ret += 'disgust="#988A81";\n'
     ret += 'color_list=['
 
@@ -56,6 +57,7 @@ def eval_emotion(twitter_name):
     emotion_count = len(emotion_list)
     for idx, item in enumerate(emotion_list):
         ret += "[{},{}],".format(idx/(emotion_count - 1), item)
-    ret+="];\n"
-    ret+= "</script></head><body><canvas id='canvas1' height='640', width='932'></canvas></body></html>"
+    ret += "];\n"
+    ret += "</script><script type='text/javascript' src='../static/main.js'></script>"
+    ret += "</head><body><canvas id='canvas1' height='640', width='932'></canvas><img src='../static/background02.png' style='display:none' id='bg-img'><img src='"+ profile_image_url+ "' style='display:none' id='profile-img'></body></html>"
     return ret
