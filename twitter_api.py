@@ -30,7 +30,20 @@ class TwitterAPI:
 
     def get_timelines_by_screen_name(self, screen_name):
         url = 'https://api.twitter.com/1.1/statuses/user_timeline.json'
-        params = {'screen_name':screen_name, 'count':10}
+        params = {'screen_name':screen_name, 'count':7}
         headers = {'Authorization': 'Bearer {}'.format(self.access_token)}
         res = requests.get(url, params=params, headers=headers)
         return res.json()
+    
+    def get_user_name_and_image(self, screen_name):
+        url = 'https://api.twitter.com/1.1/users/show.json'
+        params = {'screen_name': screen_name}
+        headers = {'Authorization': 'Bearer {}'.format(self.access_token)}
+        res = requests.get(url, params=params, headers=headers)
+        if res.ok:
+            res_json = res.json()
+            name = res_json['name']
+            image = res_json['profile_image_url']
+            return name, image
+        else:
+            raise IOError()
